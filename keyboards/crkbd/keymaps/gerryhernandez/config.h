@@ -50,3 +50,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // #define OLED_FONT_H "keyboards/crkbd/lib/glcdfont.c"
 
+#define TAPPING_TERM_PER_KEY
+#define IGNORE_MOD_TAP_INTERRUPT_PER_KEY
+#define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
+#define PERMISSIVE_HOLD_PER_KEY
+#define COMBO_ONLY_FROM_LAYER 0
+#define COMBO_SHOULD_TRIGGER
+#define COMBO_TERM_PER_COMBO
+#define AUTO_SHIFT_TIMEOUT_PER_KEY
+#define COMBO_MUST_HOLD_PER_COMBO
+
+#define MK_KINETIC_SPEED                          // Enable Kinetic mousekey movement
+#define MOUSEKEY_DELAY 	                      5 	// Delay between pressing a movement key and cursor movement
+#define MOUSEKEY_INTERVAL 	                  10  // Time between cursor movements in milliseconds
+#define MOUSEKEY_MOVE_DELTA 	                1   // Step size for accelerating from initial to base speed
+#define MOUSEKEY_INITIAL_SPEED 	              1  	// Initial speed of the cursor in pixel per second
+#define MOUSEKEY_BASE_SPEED 	                1 	// Maximum cursor speed at which acceleration stops
+#define MOUSEKEY_DECELERATED_SPEED 	          1  	// Decelerated cursor speed
+#define MOUSEKEY_ACCELERATED_SPEED 	          1 	// Accelerated cursor speed
+#define MOUSEKEY_WHEEL_INITIAL_MOVEMENTS 	    16 	// Initial number of movements of the mouse wheel
+#define MOUSEKEY_WHEEL_BASE_MOVEMENTS 	      32 	// Maximum number of movements at which acceleration stops
+#define MOUSEKEY_WHEEL_ACCELERATED_MOVEMENTS 	8 	// Accelerated wheel movements
+#define MOUSEKEY_WHEEL_DECELERATED_MOVEMENTS 	8 	// Decelerated wheel movements
+
+
