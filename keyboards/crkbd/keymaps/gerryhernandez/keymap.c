@@ -136,9 +136,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-------------------------------------------------------------.                        ,------------------------------------------------------.
       _______, _______,    _______,    _______,   _______, _______,                          _______,    KC_4,    KC_5,    KC_6,  KC_GRV,  _______,
   //|--------+--------+-----------+-----------+----------+--------|                        |--------+--------+--------+--------+--------+---------|
-      _______, _______, CKC_LBRACE, CKC_LPAREN, CKC_RPAREN, CKC_RBRACE,                     KC_QUOTE,    KC_1,    KC_2,    KC_3,    KC_0,  _______,
+      _______, _______, CKC_LBRACE, CKC_LPAREN, CKC_RPAREN, CKC_RBRACE,                       KC_GRV,    KC_1,    KC_2,    KC_3,    KC_0,  _______,
   //|--------+--------+-----------+-----------+----------+--------|                        |--------+--------+--------+--------+--------+---------|
-      _______, _______,    _______,   KC_EQUAL,  KC_MINUS, CKC_ASSIGN,                        KC_GRV,    KC_7,    KC_8,    KC_9, KC_BSLS,  _______,
+      _______, _______,    _______,   KC_MINUS,  KC_EQUAL, CKC_ASSIGN,                       _______,    KC_7,    KC_8,    KC_9, KC_BSLS,  _______,
   //|--------+--------+-----------+-----------+----------+--------+--------|        |--------+--------+--------+--------+--------+--------+---------|
                                                   _______, _______, _______,          _______, _______, _______
                                               //`--------------------------'        `--------------------------'
@@ -153,7 +153,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+-----------+-----------+-----------+-----------|                           |--------+--------+--------+--------+--------+--------|
       _______, _______,    _______,    _______,    _______,    _______,                             KC_MUTE,   KC_F7,   KC_F8,   KC_F9,  KC_F12, _______,
   //|--------+--------+-----------+-----------+-----------+-----------+--------|         |--------+--------+--------+--------+--------+--------+--------|
-                                     _______, CTL_T(C(KC_SPC)), GUI_T(G(KC_SPC)),          _______, _______, _______
+                                         _______, C(KC_SPC), G(KC_SPC),          _______, _______, _______
                                             //`--------------------------------'         `--------------------------'
   ),
 
@@ -304,7 +304,11 @@ enum combo_events {
   //CE_RMEH,
   CE_SETTINGS,
   CE_TAB,
+  CE_QUOTE,
+  CE_MINUS,
+  CE_UNDERCORE,
   CE_DEL,
+  CE_CAPS,
   COMBO_LENGTH
 };
 uint16_t COMBO_LEN = COMBO_LENGTH; // QMK requires COMBO_LEN to be set
@@ -315,7 +319,11 @@ uint16_t COMBO_LEN = COMBO_LENGTH; // QMK requires COMBO_LEN to be set
 //const uint16_t PROGMEM rmeh_combo[] = {KC_N, KC_L, COMBO_END};
 const uint16_t PROGMEM settings_combo[] = {KC_L, KC_U, KC_Y, ALT_T(KC_SCLN), COMBO_END};
 const uint16_t PROGMEM tab_combo[] = {KC_S, KC_T, COMBO_END};
-const uint16_t PROGMEM del_combo[] = {KC_E, KC_N, COMBO_END};
+const uint16_t PROGMEM quote_combo[] = {KC_E, KC_N, COMBO_END};
+const uint16_t PROGMEM minus_combo[] = {KC_H, KC_COMMA, COMBO_END};
+const uint16_t PROGMEM underscore_combo[] = {CTL_T(KC_SPC), GUI_T(KC_ESC), COMBO_END};
+const uint16_t PROGMEM del_combo[] = {LK_NAV, LK_BRKNUM, COMBO_END};
+const uint16_t PROGMEM caps_combo[] = {SFT_T(KC_A), SFT_T(KC_O), COMBO_END};
 
 combo_t key_combos[] = {
   //[CE_LHYPER] = COMBO_ACTION(lhyper_combo),
@@ -324,7 +332,11 @@ combo_t key_combos[] = {
   //[CE_RMEH] = COMBO_ACTION(rmeh_combo),
   [CE_SETTINGS] = COMBO_ACTION(settings_combo),
   [CE_TAB] = COMBO_ACTION(tab_combo),
+  [CE_QUOTE] = COMBO_ACTION(quote_combo),
+  [CE_MINUS] = COMBO_ACTION(minus_combo),
+  [CE_UNDERCORE] = COMBO_ACTION(underscore_combo),
   [CE_DEL] = COMBO_ACTION(del_combo),
+  [CE_CAPS] = COMBO_ACTION(caps_combo),
 };
 
 void process_combo_event(uint16_t combo_index, bool pressed) {
@@ -350,8 +362,24 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
       do_key(KC_TAB);
       break;
 
+    case CE_QUOTE:
+      do_key(KC_QUOTE);
+      break;
+
+    case CE_MINUS:
+      do_key(KC_MINUS);
+      break;
+
+    case CE_UNDERCORE:
+      do_key(S(KC_MINUS));
+      break;
+
     case CE_DEL:
       do_key(KC_DEL);
+      break;
+
+    case CE_CAPS:
+      do_key(KC_CAPS_LOCK);
       break;
 
     case CE_SETTINGS:
@@ -376,6 +404,8 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
   switch(index) {
+    case CE_UNDERCORE:
+    case CE_DEL:
     case CE_SETTINGS:
       return 40;
   }
@@ -509,6 +539,7 @@ void keyboard_post_init_user(void) {
   go_to_home_layer();
 }
 
+uint16_t nav_key_timer;
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch(keycode) {
     case CKC_HOMEL:
@@ -550,6 +581,31 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         SEND_STRING(":=");
       }
       return false;
+
+    //case CTL_T(C(KC_SPC)):
+    //  if(record->event.pressed) {
+    //    nav_key_timer = timer_read();
+    //    register_code16(KC_LCTL);
+    //  } else {
+    //    unregister_code16(KC_LCTL);
+    //    if(timer_elapsed(nav_key_timer) < get_tapping_term(keycode, record)) {
+    //      SEND_STRING(SS_LCTL(" "));
+    //    }
+    //  }
+    //  return false;
+
+    //case GUI_T(G(KC_SPC)):
+    //  if(record->event.pressed) {
+    //    nav_key_timer = timer_read();
+    //    register_code16(KC_LCTL);
+    //  } else {
+    //    unregister_code16(KC_LCTL);
+    //    if(timer_elapsed(nav_key_timer) < get_tapping_term(keycode, record)) {
+    //      SEND_STRING(SS_LGUI(" "));
+    //    }
+    //  }
+    //  return false;
+
   }
   return true; // Process all other keycodes normally
 }
