@@ -149,11 +149,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------------------.                           ,--------------------------------------------------------------------------.
       _______, _______,    KC_HOME,      KC_UP,     KC_END,    KC_PGUP,                             KC_VOLU,        KC_F4,        KC_F5,        KC_F6,        KC_F11, _______,
   //|--------+--------+-----------+-----------+-----------+-----------|                           |--------+-------------+-------------+-------------+--------------+--------|
-      _______, _______,    KC_LEFT,    KC_DOWN,   KC_RIGHT,    KC_PGDN,                             KC_VOLD, CTL_T(KC_F1), GUI_T(KC_F2), ALT_T(KC_F3), GUI_T(KC_F10), _______,
+      _______, _______,    KC_LEFT,    KC_DOWN,   KC_RIGHT,    KC_PGDN,                             KC_VOLD, CTL_T(KC_F1), GUI_T(KC_F2), ALT_T(KC_F3), SFT_T(KC_F10), _______,
   //|--------+--------+-----------+-----------+-----------+-----------|                           |--------+-------------+-------------+-------------+--------------+--------|
       _______, _______,    _______,    _______,    _______,    _______,                             KC_MUTE,        KC_F7,        KC_F8,        KC_F9,        KC_F12, _______,
   //|--------+--------+-----------+-----------+-----------+-----------+--------|         |--------+--------+-------------+-------------+-------------+--------------+--------|
-                                         _______, C(KC_SPC), G(KC_SPC),          _______, _______, _______
+                                       _______,  C(KC_SPC),  G(KC_SPC),                    _______, _______, _______
                                             //`--------------------------------'         `--------------------------'
   ),
 
@@ -306,6 +306,7 @@ enum combo_events {
   CE_TAB,
   CE_QUOTE,
   CE_MINUS,
+  CE_EQUAL,
   CE_UNDERCORE,
   CE_DEL,
   CE_CAPS,
@@ -320,7 +321,8 @@ uint16_t COMBO_LEN = COMBO_LENGTH; // QMK requires COMBO_LEN to be set
 const uint16_t PROGMEM settings_combo[] = {KC_L, KC_U, KC_Y, ALT_T(KC_SCLN), COMBO_END};
 const uint16_t PROGMEM tab_combo[] = {KC_S, KC_T, COMBO_END};
 const uint16_t PROGMEM quote_combo[] = {KC_E, KC_N, COMBO_END};
-const uint16_t PROGMEM minus_combo[] = {KC_E, KC_M, COMBO_END};
+const uint16_t PROGMEM minus_combo[] = {KC_E, KC_H, COMBO_END};
+const uint16_t PROGMEM equal_combo[] = {KC_S, KC_D, COMBO_END};
 const uint16_t PROGMEM underscore_combo[] = {CTL_T(KC_SPC), GUI_T(KC_ESC), COMBO_END};
 const uint16_t PROGMEM del_combo[] = {LK_NAV, LK_BRKNUM, COMBO_END};
 const uint16_t PROGMEM caps_combo[] = {SFT_T(KC_A), SFT_T(KC_O), COMBO_END};
@@ -334,6 +336,7 @@ combo_t key_combos[] = {
   [CE_TAB] = COMBO_ACTION(tab_combo),
   [CE_QUOTE] = COMBO_ACTION(quote_combo),
   [CE_MINUS] = COMBO_ACTION(minus_combo),
+  [CE_EQUAL] = COMBO_ACTION(equal_combo),
   [CE_UNDERCORE] = COMBO_ACTION(underscore_combo),
   [CE_DEL] = COMBO_ACTION(del_combo),
   [CE_CAPS] = COMBO_ACTION(caps_combo),
@@ -368,6 +371,10 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
 
     case CE_MINUS:
       do_key(KC_MINUS);
+      break;
+
+    case CE_EQUAL:
+      do_key(KC_EQUAL);
       break;
 
     case CE_UNDERCORE:
